@@ -5,7 +5,7 @@ plugins {
 	id("com.github.johnrengelman.shadow") version ("4.0.4")
 }
 
-group = "cn.jeff.test"
+group = "cn.jeff.app"
 version = "1.0-SNAPSHOT"
 
 repositories {
