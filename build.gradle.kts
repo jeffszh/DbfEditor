@@ -9,11 +9,32 @@ group = "cn.jeff.test"
 version = "1.0-SNAPSHOT"
 
 repositories {
+	mavenLocal()
 	mavenCentral()
+	maven("https://maven.aliyun.com/repository/public")
 }
 
+dependencies {
+	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2")
 
+	implementation("no.tornado:tornadofx:1.7.17")
 
-tasks.withType<KotlinCompile>() {
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation(
+		"com.google.code.gson",
+		name = "gson",
+		version = "2.8.6"
+	)
+}
+
+tasks.withType<KotlinCompile> {
 	kotlinOptions.jvmTarget = "1.8"
+}
+
+tasks.shadowJar {
+	manifest {
+		attributes["Main-Class"] = "cn.jeff.prj04.AppMain"
+	}
 }
