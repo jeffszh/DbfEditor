@@ -12,6 +12,7 @@ repositories {
 	mavenLocal()
 	mavenCentral()
 	maven("https://maven.aliyun.com/repository/public")
+	maven("https://maven.aliyun.com/nexus/content/groups/public/")
 }
 
 dependencies {
