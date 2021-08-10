@@ -29,7 +29,11 @@ class MainWnd : View("DBF编辑器") {
 			j.btnOpenFile -> {
 				j.lbStatus.text = "运行中……"
 				val demoData = listOf(1 to "one", 2 to "two", 3 to "three")
-				val dbfWnd = DbfWnd(demoData)
+				val dbfWnd = DbfWnd(
+					demoData,
+					"序號" to Pair<Int, String>::first,
+					"內容" to Pair<Int, String>::second
+				)
 				j.mainTabPane.tab(dbfWnd).text = "d${Random.nextInt(9999)}"
 				j.lbStatus.text = "就绪"
 			}
