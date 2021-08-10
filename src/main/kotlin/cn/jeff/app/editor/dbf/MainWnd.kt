@@ -25,8 +25,8 @@ class MainWnd : View("DBF编辑器") {
 
 	fun btnClicked(actionEvent: ActionEvent) {
 		when (actionEvent.source) {
-			j.btn01 -> {
-				j.label01.text = "很好！"
+			j.btnOpenFile -> {
+				j.lbStatus.text = "很好！"
 			}
 			else -> {
 				println("不会运行到这里。")
