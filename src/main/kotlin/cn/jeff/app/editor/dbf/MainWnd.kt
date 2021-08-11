@@ -22,17 +22,21 @@ class MainWnd : View("DBF编辑器") {
 		)
 		j = loader.getController()
 		j.k = this
+
+		j.mainTabPane.tabs.clear()
 	}
 
 	fun btnClicked(actionEvent: ActionEvent) {
 		when (actionEvent.source) {
 			j.btnOpenFile -> {
 				j.lbStatus.text = "运行中……"
-				val demoData = listOf(1 to "one", 2 to "two", 3 to "three")
 				val dbfWnd = DbfWnd(
-					demoData,
-					"序號" to Pair<Int, String>::first,
-					"內容" to Pair<Int, String>::second
+					arrayOf("序号", "内容"),
+					listOf(
+						arrayOf<Any>(1, "one"),
+						arrayOf<Any>(2, "two"),
+						arrayOf<Any>(3, "three"),
+					).observable()
 				)
 				j.mainTabPane.tab(dbfWnd).text = "d${Random.nextInt(9999)}"
 				j.lbStatus.text = "就绪"

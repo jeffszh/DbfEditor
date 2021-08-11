@@ -1,20 +1,21 @@
 package cn.jeff.app.editor.dbf
 
-import javafx.scene.control.TableColumn
-import javafx.util.Callback
+import javafx.beans.property.ReadOnlyObjectWrapper
+import javafx.collections.ObservableList
 import tornadofx.*
-import kotlin.reflect.KProperty1
 
-class DbfWnd<T>(
-	data: List<T>,
-	vararg columnDefs: Pair<String, KProperty1<T, Any>>
-) : View() {
+class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : View() {
 
-	override val root = tableview(data.observable()) {
-		columnDefs.forEach { (title, prop) ->
-			val column = TableColumn<T, Any>(title)
-			column.cellValueFactory = Callback { observable(it.value, prop) }
-			addColumnInternal(column)
+	override val root = tableview(data) {
+		titles.forEachIndexed { i, title ->
+			column<Array<Any>, Any>(title) {
+				// SimpleObjectProperty(it.value[i])
+				// 用上面这句也可以，效果一样。
+				// 下面的一句是从TornadoFX文档中学来，
+				// 位于： Part 1: TornadoFX Fundamentals / 5. Data Controls 中
+				// Declaring Column Values Functionally 一节。
+				ReadOnlyObjectWrapper(it.value[i])
+			}
 		}
 	}
 
