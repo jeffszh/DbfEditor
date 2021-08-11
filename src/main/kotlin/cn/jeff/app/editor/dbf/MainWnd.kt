@@ -38,7 +38,13 @@ class MainWnd : View("DBF编辑器") {
 						arrayOf<Any>(3, "three"),
 					).observable()
 				)
-				j.mainTabPane.tab(dbfWnd).text = "d${Random.nextInt(9999)}"
+				j.mainTabPane.tab(dbfWnd).also {
+					it.text = "d${Random.nextInt(9999)}"
+					it.setOnClosed {
+						println("关闭了！")
+						// dbfWnd.close()
+					}
+				}
 				j.lbStatus.text = "就绪"
 			}
 			else -> {

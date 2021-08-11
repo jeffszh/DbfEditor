@@ -4,7 +4,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper
 import javafx.collections.ObservableList
 import tornadofx.*
 
-class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : View() {
+class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : Fragment() {
 
 	override val root = tableview(data) {
 		titles.forEachIndexed { i, title ->
