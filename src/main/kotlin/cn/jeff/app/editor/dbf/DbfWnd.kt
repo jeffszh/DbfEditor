@@ -19,14 +19,4 @@ class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : Fragment
 		}
 	}
 
-	override fun onDelete() {
-		super.onDelete()
-		println("删除窗口。")
-	}
-
-	override fun onUndock() {
-		super.onUndock()
-		print("离开！")
-	}
-
 }
