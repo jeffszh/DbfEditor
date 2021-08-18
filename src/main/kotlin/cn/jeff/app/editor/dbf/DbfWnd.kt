@@ -4,6 +4,17 @@ import javafx.collections.ObservableList
 import javafx.util.StringConverter
 import tornadofx.*
 
+class DbfWnd(dbfFilename: String) : Fragment() {
+
+	override val root = borderpane {
+		top {
+			label(dbfFilename)
+		}
+	}
+
+}
+
+/*
 class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : Fragment() {
 
 	override val root = tableview(data) {
@@ -40,3 +51,4 @@ class DbfWnd(titles: Array<String>, data: ObservableList<Array<Any>>) : Fragment
 	}
 
 }
+*/

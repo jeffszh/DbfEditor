@@ -28,6 +28,10 @@ dependencies {
 		name = "gson",
 		version = "2.8.6"
 	)
+
+	// https://mvnrepository.com/artifact/com.github.albfernandez/javadbf
+	@Suppress("SpellCheckingInspection")
+	implementation("com.github.albfernandez", "javadbf", "1.13.1")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,11 +1,12 @@
 package cn.jeff.app.editor.dbf
 
+import cn.jeff.app.GlobalVars
 import javafx.event.ActionEvent
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
-import javafx.util.Duration
+import javafx.stage.FileChooser
 import tornadofx.*
-import kotlin.random.Random
+import java.io.File
 
 class MainWnd : View("DBF编辑器") {
 
@@ -31,38 +32,25 @@ class MainWnd : View("DBF编辑器") {
 		when (actionEvent.source) {
 			j.btnOpenFile -> {
 				j.lbStatus.text = "运行中……"
-				val lst = listOf(
-					arrayOf<Any>(1, "one"),
-					arrayOf<Any>(2, "two"),
-					arrayOf<Any>(3, "three"),
-				)
-				val dbfWnd = DbfWnd(
-					arrayOf("序号", "内容"),
-					lst.observable()
-				)
-				j.mainTabPane.tab(dbfWnd).also {
-					it.text = "d${Random.nextInt(9999)}"
-					it.select()
+				val selectedFiles = chooseFile(
+					"打开DBF文件", arrayOf(
+						FileChooser.ExtensionFilter(
+							"DBF文件", "*.dbf"
+						)
+					)
+				) {
+					initialDirectory = File(GlobalVars.appConf.defaultDbfFilePath)
+				}
+				if (selectedFiles.isNotEmpty()) {
+					val file = selectedFiles[0]
+					GlobalVars.appConf.defaultDbfFilePath = file.parent
+					GlobalVars.saveConfig()
+					j.mainTabPane.tab(DbfWnd(file.path)).also {
+						it.text = file.name
+						it.select()
+					}
 				}
 				j.lbStatus.text = "就绪"
-				runLater(Duration.seconds(15.0)) {
-					lst.forEach {
-						print("${it[0]} : ${it[0].javaClass}    ")
-						print("${it[1]} : ${it[1].javaClass}\n")
-					}
-				}
-				runLater(Duration.seconds(20.0)) {
-					lst.forEach {
-						print("${it[0]} : ${it[0].javaClass}    ")
-						print("${it[1]} : ${it[1].javaClass}\n")
-					}
-				}
-				runLater(Duration.seconds(25.0)) {
-					lst.forEach {
-						print("${it[0]} : ${it[0].javaClass}    ")
-						print("${it[1]} : ${it[1].javaClass}\n")
-					}
-				}
 			}
 			else -> {
 				println("不会运行到这里。")
