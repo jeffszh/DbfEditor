@@ -2,6 +2,7 @@ package cn.jeff.app.editor.dbf
 
 import cn.jeff.app.GlobalVars
 import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.fxml.FXMLLoader
 import javafx.scene.layout.BorderPane
 import javafx.stage.FileChooser
@@ -45,9 +46,15 @@ class MainWnd : View("DBF编辑器") {
 					val file = selectedFiles[0]
 					GlobalVars.appConf.defaultDbfFilePath = file.parent
 					GlobalVars.saveConfig()
-					j.mainTabPane.tab(DbfWnd(file.path)).also {
+					val dbfWnd = DbfWnd(file.path)
+					j.mainTabPane.tab(dbfWnd).also {
 						it.text = file.name
 						it.select()
+						it.onCloseRequest = EventHandler { e ->
+							if (!dbfWnd.askForClose()) {
+								e.consume()
+							}
+						}
 					}
 				}
 				j.lbStatus.text = "就绪"

@@ -4,4 +4,6 @@ class AppConf {
 
 	var defaultDbfFilePath = "."
 
+	var defaultCharset = "GBK"
+
 }
