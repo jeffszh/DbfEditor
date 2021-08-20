@@ -99,7 +99,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 				reader.getField(i)
 			}
 			val records = (0 until reader.recordCount).map {
-				reader.nextRecord()
+				reader.nextRecord() ?: arrayOfNulls(reader.fieldCount)
 			}
 			return fields to records
 		}
