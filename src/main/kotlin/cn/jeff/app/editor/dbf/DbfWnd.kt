@@ -1,15 +1,22 @@
 package cn.jeff.app.editor.dbf
 
 import cn.jeff.app.GlobalVars
+import com.linuxense.javadbf.DBFDataType
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Pos
+import javafx.util.StringConverter
 import tornadofx.*
 import java.io.FileInputStream
+import java.io.IOException
 import java.nio.charset.Charset
 
 class DbfWnd(private val dbfFilename: String) : Fragment() {
+
+	companion object {
+		private const val NULL_SIGN = "(null)"
+	}
 
 	private val isModified = SimpleBooleanProperty(false)
 	private val defaultCharset = Charset.forName(GlobalVars.appConf.defaultCharset)
@@ -25,16 +32,47 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 					}
 				}.enableWhen(isModified)
 				label(dbfFilename)
+				button("导出Excel") {
+					action {
+					}
+				}
 			}
 		}
 		val (fields, records) = loadDbf()
 		center {
 			tableview(records.observable()) {
 				fields.forEachIndexed { index, dbfField ->
-					column<Array<Any>, Any>(dbfField.name) {
+					column<Array<Any?>, Any>(dbfField.name) {
 						val arrAccessor = ArrAccessor(it.value, index)
 						arrAccessor.observable(ArrAccessor::value)
-					}
+					}.makeEditable(object : StringConverter<Any>() {
+						override fun toString(obj: Any?) = obj?.toString() ?: NULL_SIGN
+						override fun fromString(aStr: String?): Any {
+							isModified.value = true
+							if (aStr.isNullOrBlank()) {
+								// 若为空或只包含空格，换成空信号。
+								return NULL_SIGN
+							}
+							val str = aStr.trim()
+							return when (dbfField.type) {
+								DBFDataType.CHARACTER, DBFDataType.VARCHAR -> {
+									str
+								}
+								// DBFDataType.NUMERIC,
+								DBFDataType.FLOATING_POINT,
+								DBFDataType.DOUBLE,
+								DBFDataType.CURRENCY -> {
+									str.toDouble()
+								}
+								DBFDataType.LONG -> {
+									str.toInt()
+								}
+								else -> {
+									throw IOException("不支持修改的数据类型：${dbfField.type}")
+								}
+							}
+						}
+					})
 				}
 			}
 		}
@@ -45,14 +83,17 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 	 * @return 若确认可关闭，返回true。
 	 */
 	fun askForClose(): Boolean {
+		if (!isModified.value) {
+			return true
+		}
 		var canClose = false
-		confirm("关闭吗？") {
+		confirm("不保存就关闭吗？") {
 			canClose = true
 		}
 		return canClose
 	}
 
-	private fun loadDbf(): Pair<List<DBFField>, List<Array<Any>>> {
+	private fun loadDbf(): Pair<List<DBFField>, List<Array<Any?>>> {
 		DBFReader(FileInputStream(dbfFilename), defaultCharset).use { reader ->
 			val fields = (0 until reader.fieldCount).map { i ->
 				reader.getField(i)
@@ -64,11 +105,11 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 		}
 	}
 
-	class ArrAccessor(private val arr: Array<Any>, private val ind: Int) {
+	class ArrAccessor(private val arr: Array<Any?>, private val ind: Int) {
 		var value: Any
-			get() = arr[ind]
+			get() = arr[ind] ?: NULL_SIGN
 			set(value) {
-				arr[ind] = value
+				arr[ind] = if (value == NULL_SIGN) null else value
 			}
 	}
 
