@@ -114,12 +114,12 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 		DBFWriter(FileOutputStream(dbfFilename), defaultCharset).use { writer ->
 			writer.setFields(fields.toTypedArray())
 			records.forEach { record ->
-//				if (record.all { it == null }) {
-//					writer.addRecord(null)
-//				} else {
-//					writer.addRecord(record)
-//				}
-				writer.addRecord(record)
+				if (record.all { it == null }) {
+					// writer.addRecord(null)
+				} else {
+					writer.addRecord(record)
+				}
+//				writer.addRecord(record)
 			}
 		}
 	}
