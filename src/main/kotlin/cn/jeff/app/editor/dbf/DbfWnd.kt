@@ -4,11 +4,13 @@ import cn.jeff.app.GlobalVars
 import com.linuxense.javadbf.DBFDataType
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
+import com.linuxense.javadbf.DBFWriter
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.geometry.Pos
 import javafx.util.StringConverter
 import tornadofx.*
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
 
@@ -22,6 +24,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 	private val defaultCharset = Charset.forName(GlobalVars.appConf.defaultCharset)
 
 	override val root = borderpane {
+		val (fields, records) = loadDbf()
 		top {
 			hbox {
 				alignment = Pos.CENTER_LEFT
@@ -29,16 +32,18 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 				paddingAll = 10.0
 				button("保存修改") {
 					action {
+						saveDbf(fields, records)
+						isModified.value = false
 					}
 				}.enableWhen(isModified)
 				label(dbfFilename)
 				button("导出Excel") {
 					action {
+						information("未实现。")
 					}
 				}
 			}
 		}
-		val (fields, records) = loadDbf()
 		center {
 			tableview(records.observable()) {
 				fields.forEachIndexed { index, dbfField ->
@@ -58,7 +63,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 								DBFDataType.CHARACTER, DBFDataType.VARCHAR -> {
 									str
 								}
-								// DBFDataType.NUMERIC,
+								DBFDataType.NUMERIC,
 								DBFDataType.FLOATING_POINT,
 								DBFDataType.DOUBLE,
 								DBFDataType.CURRENCY -> {
@@ -102,6 +107,20 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 				reader.nextRecord() ?: arrayOfNulls(reader.fieldCount)
 			}
 			return fields to records
+		}
+	}
+
+	private fun saveDbf(fields: List<DBFField>, records: List<Array<Any?>>) {
+		DBFWriter(FileOutputStream(dbfFilename), defaultCharset).use { writer ->
+			writer.setFields(fields.toTypedArray())
+			records.forEach { record ->
+//				if (record.all { it == null }) {
+//					writer.addRecord(null)
+//				} else {
+//					writer.addRecord(record)
+//				}
+				writer.addRecord(record)
+			}
 		}
 	}
 
