@@ -2,6 +2,7 @@ package cn.jeff.app.editor.dbf
 
 import cn.jeff.app.GlobalVars
 import com.caigen.sql.CaigenDataSource
+import com.caigen.sql.CaigenDriver
 import com.linuxense.javadbf.DBFDataType
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
@@ -14,6 +15,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.nio.charset.Charset
+import java.sql.DriverManager
+import java.util.*
 
 class DbfWnd(private val dbfFilename: String) : Fragment() {
 
@@ -25,7 +28,26 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 	private val defaultCharset = Charset.forName(GlobalVars.appConf.defaultCharset)
 
 	override val root = borderpane {
-		println(CaigenDataSource())
+		// println(CaigenDataSource())
+		/*
+		Class.forName("com.caigen.sql.dbf.DBFDriver")
+		val props = Properties().apply {
+			setProperty("charSet", GlobalVars.appConf.defaultCharset)
+		}
+		val conn = DriverManager.getConnection(
+			"jdbc:dbf:/${dbfFilename.replace('\\', '/')}", props
+		)
+		*/
+		val dataSrc = CaigenDataSource()
+		// dataSrc.charSet = GlobalVars.appConf.defaultCharset
+		// dataSrc.setUrl("jdbc:dbf:/${dbfFilename}")
+		// dataSrc.setURL("jdbc:dbf:/${dbfFilename.replace('\\', '/')}")
+		// dataSrc.setURL("jdbc:dbf:/e:/work/Globals/GAI.dbf") 这句不行。
+		dataSrc.setURL("jdbc:dbf:/e:/work/Globals")	// 这样才行。
+		val conn = dataSrc.connection
+		println("conn=$conn")
+		conn.close()
+
 		val (fields, records) = loadDbf()
 		top {
 			hbox {
