@@ -74,6 +74,9 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 								DBFDataType.LONG -> {
 									str.toInt()
 								}
+								DBFDataType.LOGICAL -> {
+									str.toBoolean()
+								}
 								else -> {
 									throw IOException("不支持修改的数据类型：${dbfField.type}")
 								}
