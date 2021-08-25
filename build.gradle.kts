@@ -32,6 +32,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.github.albfernandez/javadbf
 	@Suppress("SpellCheckingInspection")
 	implementation("com.github.albfernandez", "javadbf", "1.13.1")
+
+	implementation(fileTree(mapOf("dir" to "libs/", "include" to listOf("*.jar"))))
 }
 
 tasks.withType<KotlinCompile> {
