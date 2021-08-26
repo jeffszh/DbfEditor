@@ -33,6 +33,7 @@ dependencies {
 	@Suppress("SpellCheckingInspection")
 	implementation("com.github.albfernandez", "javadbf", "1.13.1")
 
+	// 下面这句已经没用了，用JDBC更麻烦，改回原先的方法。但下面这句作为添加本地jar的例子，留着。
 	implementation(fileTree(mapOf("dir" to "libs/", "include" to listOf("*.jar"))))
 }
 
