@@ -1,12 +1,13 @@
 package cn.jeff.app.editor.dbf
 
 import cn.jeff.app.GlobalVars
+import cn.jeff.app.textInputDialog as inputText
 import com.linuxense.javadbf.DBFDataType
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
 import com.linuxense.javadbf.DBFWriter
 import javafx.beans.property.SimpleBooleanProperty
-import javafx.collections.ObservableList
+import javafx.collections.ObservableList as TableData
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
 import javafx.util.StringConverter
@@ -50,10 +51,25 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 						records.add(arrayOfNulls(fields.count()))
 					}
 				}
+
+				var searchingText = ""
+				button("搜索") {
+					action {
+						inputText("请输入搜索内容", searchingText) { text ->
+							searchingText = text
+							theTable.selectWhere { rec ->
+								rec.any {
+									it.toString().contains(text, true)
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 		center {
 			theTable = tableview(records) {
+				isTableMenuButtonVisible = true
 				fields.forEachIndexed { index, dbfField ->
 					column<Array<Any?>, Any>(dbfField.name) {
 						val arrAccessor = ArrAccessor(it.value, index)
@@ -109,7 +125,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 		return canClose
 	}
 
-	private fun loadDbf(): Pair<List<DBFField>, ObservableList<Array<Any?>>> {
+	private fun loadDbf(): Pair<List<DBFField>, TableData<Array<Any?>>> {
 		DBFReader(FileInputStream(dbfFilename), defaultCharset).use { reader ->
 			val fields = (0 until reader.fieldCount).map { i ->
 				reader.getField(i)
