@@ -53,14 +53,76 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 				}
 
 				var searchingText = ""
+				var foundIndex = -1
 				button("搜索") {
 					action {
-						inputText("请输入搜索内容", searchingText) { text ->
-							searchingText = text
+						inputText("请输入搜索内容", searchingText) { inputtedText ->
+							searchingText = inputtedText.let {
+								if (it.isBlank())
+									NULL_SIGN
+								else
+									it.trim()
+							}
+							/*
 							theTable.selectWhere { rec ->
 								rec.any {
 									it.toString().contains(text, true)
 								}
+							}
+							*/
+							foundIndex = records.indexOfFirst { rec ->
+								rec.any {
+									it.toString().contains(searchingText, true)
+								}
+							}
+							if (foundIndex < 0) {
+								information("找不到包含“$searchingText”的任何内容。")
+							} else {
+								theTable.selectionModel.select(foundIndex)
+								theTable.scrollTo(foundIndex)
+							}
+						}
+					}
+				}
+				button("搜下一个") {
+					action {
+						if (foundIndex < 0) {
+							information("先前没有搜索到，请重新搜索。")
+						} else {
+							val subList = records.subList(foundIndex + 1, records.count())
+							val nextFound = subList.indexOfFirst { rec ->
+								rec.any {
+									it.toString().contains(searchingText, true)
+								}
+							}
+							if (nextFound < 0) {
+								information("后面没有包含“$searchingText”的内容了。")
+							} else {
+								foundIndex += nextFound + 1    // 因为subList是从foundIndex+1开始的，
+								// 漏了上面这句就会有bug。
+								theTable.selectionModel.select(foundIndex)
+								theTable.scrollTo(foundIndex)
+							}
+						}
+					}
+				}
+				button("搜上一个") {
+					action {
+						if (foundIndex < 0) {
+							information("先前没有搜索到，请重新搜索。")
+						} else {
+							val subList = records.subList(0, foundIndex)
+							val prevFound = subList.indexOfLast { rec ->
+								rec.any {
+									it.toString().contains(searchingText, true)
+								}
+							}
+							if (prevFound < 0) {
+								information("前面没有包含“$searchingText”的内容了。")
+							} else {
+								foundIndex = prevFound
+								theTable.selectionModel.select(foundIndex)
+								theTable.scrollTo(foundIndex)
 							}
 						}
 					}
