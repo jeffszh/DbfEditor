@@ -1,7 +1,6 @@
 package cn.jeff.app.editor.dbf
 
 import cn.jeff.app.GlobalVars
-import com.caigen.sql.CaigenDataSource
 import com.linuxense.javadbf.DBFDataType
 import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
@@ -25,7 +24,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 	private val defaultCharset = Charset.forName(GlobalVars.appConf.defaultCharset)
 
 	override val root = borderpane {
-		println(CaigenDataSource())
+		// println(CaigenDataSource())
 		val (fields, records) = loadDbf()
 		top {
 			hbox {
