@@ -6,7 +6,9 @@ import com.linuxense.javadbf.DBFField
 import com.linuxense.javadbf.DBFReader
 import com.linuxense.javadbf.DBFWriter
 import javafx.beans.property.SimpleBooleanProperty
+import javafx.collections.ObservableList
 import javafx.geometry.Pos
+import javafx.scene.control.TableView
 import javafx.util.StringConverter
 import tornadofx.*
 import java.io.FileInputStream
@@ -22,6 +24,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 
 	private val isModified = SimpleBooleanProperty(false)
 	private val defaultCharset = Charset.forName(GlobalVars.appConf.defaultCharset)
+	private var theTable: TableView<Array<Any?>> by singleAssign(SingleAssignThreadSafetyMode.NONE)
 
 	override val root = borderpane {
 		val (fields, records) = loadDbf()
@@ -42,10 +45,15 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 						information("未实现。")
 					}
 				}
+				button("添加新记录") {
+					action {
+						records.add(arrayOfNulls(fields.count()))
+					}
+				}
 			}
 		}
 		center {
-			tableview(records.observable()) {
+			theTable = tableview(records) {
 				fields.forEachIndexed { index, dbfField ->
 					column<Array<Any?>, Any>(dbfField.name) {
 						val arrAccessor = ArrAccessor(it.value, index)
@@ -101,7 +109,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 		return canClose
 	}
 
-	private fun loadDbf(): Pair<List<DBFField>, List<Array<Any?>>> {
+	private fun loadDbf(): Pair<List<DBFField>, ObservableList<Array<Any?>>> {
 		DBFReader(FileInputStream(dbfFilename), defaultCharset).use { reader ->
 			val fields = (0 until reader.fieldCount).map { i ->
 				reader.getField(i)
@@ -109,7 +117,7 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 			val records = (0 until reader.recordCount).map {
 				reader.nextRecord() ?: arrayOfNulls(reader.fieldCount)
 			}
-			return fields to records
+			return fields to records.observable()
 		}
 	}
 
