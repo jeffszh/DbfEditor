@@ -27,6 +27,7 @@ class MainWnd : View("DBF编辑器") {
 		j.k = this
 
 		j.mainTabPane.tabs.clear()
+		j.btnOpenFile.shortcut("Ctrl+O")
 	}
 
 	fun btnClicked(actionEvent: ActionEvent) {
