@@ -10,6 +10,9 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.ObservableList as TableData
 import javafx.geometry.Pos
 import javafx.scene.control.TableView
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCodeCombination
+import javafx.scene.input.KeyCombination
 import javafx.util.StringConverter
 import tornadofx.*
 import java.io.FileInputStream
@@ -54,7 +57,13 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 
 				var searchingText = ""
 				var foundIndex = -1
-				button("搜索") {
+				button("_F搜索") {
+					// isMnemonicParsing = false
+					//shortcut(KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN))
+					shortcut("Ctrl-F")
+					shortcut("Ctrl+F") {
+						println("这样吗？")
+					}
 					action {
 						inputText("请输入搜索内容", searchingText) { inputtedText ->
 							searchingText = inputtedText.let {
@@ -84,7 +93,8 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 						}
 					}
 				}
-				button("搜下一个") {
+				button("_N搜下一个") {
+					shortcut(KeyCodeCombination(KeyCode.GREATER, KeyCombination.CONTROL_DOWN))
 					action {
 						if (foundIndex < 0) {
 							information("先前没有搜索到，请重新搜索。")
@@ -106,7 +116,8 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 						}
 					}
 				}
-				button("搜上一个") {
+				button("_P搜上一个") {
+					shortcut(KeyCodeCombination(KeyCode.LESS, KeyCombination.CONTROL_DOWN))
 					action {
 						if (foundIndex < 0) {
 							information("先前没有搜索到，请重新搜索。")
