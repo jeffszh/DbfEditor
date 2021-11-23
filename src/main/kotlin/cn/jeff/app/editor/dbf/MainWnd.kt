@@ -47,10 +47,10 @@ class MainWnd : View("DBF编辑器") {
 					GlobalVars.appConf.defaultDbfFilePath = file.parent
 					GlobalVars.saveConfig()
 					val dbfWnd = DbfWnd(file.path)
-					j.mainTabPane.tab(dbfWnd).also {
-						it.text = file.name
-						it.select()
-						it.onCloseRequest = EventHandler { e ->
+					j.mainTabPane.tab(dbfWnd) {
+						text = file.name
+						select()
+						onCloseRequest = EventHandler { e ->
 							if (!dbfWnd.askForClose()) {
 								e.consume()
 							}
