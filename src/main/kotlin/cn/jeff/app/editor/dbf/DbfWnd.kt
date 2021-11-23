@@ -60,10 +60,10 @@ class DbfWnd(private val dbfFilename: String) : Fragment() {
 				button("_F搜索") {
 					// isMnemonicParsing = false
 					//shortcut(KeyCodeCombination(KeyCode.F, KeyCodeCombination.CONTROL_DOWN))
-					shortcut("Ctrl-F")
-					shortcut("Ctrl+F") {
-						println("这样吗？")
-					}
+//					shortcut("Ctrl-F")
+//					shortcut("Ctrl+F") {
+//						println("这样吗？")
+//					}
 					action {
 						inputText("请输入搜索内容", searchingText) { inputtedText ->
 							searchingText = inputtedText.let {
